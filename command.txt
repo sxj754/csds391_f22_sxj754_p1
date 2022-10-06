@@ -1,0 +1,2 @@
+randomizeState 3
+solve A-star
