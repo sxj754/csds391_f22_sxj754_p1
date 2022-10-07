@@ -154,8 +154,10 @@ def solveAStar(startState):
         if isGoal(currentNode.state):
             sequences = traceBack(currentNode)
             print("\n========== finished ==========")
-            print("depth: ", currentNode.depth)
+            print("initial state")
+            printState(initNode.state)
             print("sequences: ", " - ".join(sequences))
+            print("depth: ", currentNode.depth)
             return currentNode.state
         explored.append(currentNode.state)
         possibleActions = currentNode.findPossibleAction()

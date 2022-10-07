@@ -1,2 +1,2 @@
-randomizeState 10
+randomizeState 100
 solve A-star
