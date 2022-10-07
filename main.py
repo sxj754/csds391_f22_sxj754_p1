@@ -1,12 +1,7 @@
-from ast import Str
 import random
 
 STATE = []
-# STATE is a 3x3 2-dimentional array
-# Ex) [[b, 1, 2],
-#      [3, 4, 5],
-#      [6, 7, 8]]
-
+random.seed(11)
 MAX_NODES = 0
 
 
@@ -25,7 +20,7 @@ def printState(state):
 
 
 def move(state, direction):
-    if type(state) == type("aaaaaaaaaaaaaa"):
+    if isinstance(state, str):  # Check if the state is string
         state = list(state)
     idx = state.index("b")
     if direction == "up":
@@ -64,6 +59,7 @@ def randomizeState(n):
     setState("b12345678")
     directionList = ["up", "down", "left", "right"]
     i = 0
+    print("========== randomizing ==========")
     while i < int(n):
         randomIdx = random.randint(0, 3)
         result = move(STATE, directionList[randomIdx])
@@ -74,11 +70,14 @@ def randomizeState(n):
 
 
 class Node:
-    def __init__(self, state, parent, depth):
-        self.state = "".join(state)
+    def __init__(self, state, parent, actionFromParent, depth):
+        self.state = "".join(state)  # self.state is string
         self.parent = parent
+        # Action taken by parent to come to this state
+        self.actionFromParent = actionFromParent
         self.depth = depth
         self.heuristic = self.calcH1() + self.calcH2()
+        self.evaluation = self.depth + self.heuristic  # f(n) = g(n) + h(n)
 
     def calcH1(self):
         # h1 is the number of misplaced tiles
@@ -126,7 +125,7 @@ class Node:
     def makeChildNode(self, action):
         nextState = move(self.state, action)
         printState(nextState)
-        return Node(nextState, self, self.depth + 1)
+        return Node(nextState, self, action, self.depth + 1)
 
 
 def solveAStar(startState):
@@ -136,48 +135,61 @@ def solveAStar(startState):
         else:
             return 0
 
+    def traceBack(node):
+        # Recursive function to trace action
+        if node.parent == None:
+            return []
+        else:
+            return traceBack(node.parent) + [node.actionFromParent]
+
     print("=" * 20, "A-Star search start", "=" * 20)
-    initNode = Node(startState, None, 0)  # Initial state
+    initNode = Node(startState, None, None, 0)  # Initial state
     frontier = [initNode]  # contains nodes
     explored = []  # contains states
-    actions = []  # Contains possible actions of a node
+    sequences = []  # Sequences of action from the starting state to the goal state
 
     # loop
     while len(frontier) != 0:
         currentNode = frontier.pop(0)
         if isGoal(currentNode.state):
-            return currentNode
+            sequences = traceBack(currentNode)
+            print("\n========== finished ==========")
+            print("depth: ", currentNode.depth)
+            print("sequences: ", " - ".join(sequences))
+            return currentNode.state
         explored.append(currentNode.state)
-        actions = currentNode.findPossibleAction()
+        possibleActions = currentNode.findPossibleAction()
 
-        for action in actions:  # search children
-            print("\n===== loop =====")
+        for action in possibleActions:  # search children
+            print("\n========== loop ==========")
             frontierStates = list(map(lambda node: node.state, frontier))
             child = currentNode.makeChildNode(action)
             if child.state not in explored and child.state not in frontierStates:
                 # Insert child to an appropriate index of frontier
-                # by finding the first index bigger than the child's heuristic
+                # by finding the first index bigger than the child's evaluation
                 if len(frontier) == 0:
                     frontier.append(child)
-                elif all(node.heuristic < child.heuristic for node in frontier):
-                    # If nothing is bigger than child's heuristic,
+                elif all(node.evaluation < child.evaluation for node in frontier):
+                    # If nothing is bigger than child's evaluation,
                     # just append at the end of the list
                     frontier.append(child)
                 else:
                     for idx, node in enumerate(frontier):
-                        if node.heuristic > child.heuristic:
+                        if node.evaluation > child.evaluation:
                             frontier.insert(idx, child)
                             break
 
             elif child.state in frontierStates:
-                # Find the index with same state and then check the heuristic
-                # If this child's heuristic is smaller, change the node.
+                # Find the index with same state and then check the evaluation
+                # If this child's evaluation is smaller, change the node.
                 idx = frontierStates.index(child.state)
-                if frontier[idx].heuristic > child.heuristic:
+                if frontier[idx].evaluation > child.evaluation:
                     frontier[idx] = child
-            print("frontier: ", list(map(lambda node: node.state, frontier)))
-            print("explored: ", explored)
+            print("frontier: ", list(map(lambda node: node.state, frontier))[0:10])
+            print("explored: ", explored[0:10])
+            print("depth: ", child.depth)
             print("heuristic: ", child.heuristic)
+            print("evaluation: ", child.evaluation)
         # TODO: traceback
 
     return 0
@@ -207,9 +219,7 @@ with open("command.txt") as file:
 
         elif args[0] == "solve":
             if args[1] == "A-star":
-                result = solveAStar(STATE)
-                print("\nfinished: ", result.state)
-                print("depth: ", result.depth)
+                STATE = solveAStar(STATE)
 
             elif args[1] == "beam":
                 solveLocalBeam()
