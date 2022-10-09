@@ -1,14 +1,11 @@
 import random
 from utils import printState, move, randomizeState
 from astar import solveAStar
+from localbeam import solveLocalBeam
 
 STATE = []
-random.seed(11)
 MAX_NODES = 0
-
-
-def solveLocalBeam():
-    pass
+random.seed(11)
 
 
 with open("command.txt") as file:
@@ -38,4 +35,4 @@ with open("command.txt") as file:
                 STATE = solveAStar(STATE)
 
             elif args[1] == "beam":
-                solveLocalBeam()
+                STATE = solveLocalBeam(STATE, args[2])

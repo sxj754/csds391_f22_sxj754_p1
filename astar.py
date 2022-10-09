@@ -61,12 +61,6 @@ class Node:
 
 
 def solveAStar(startState):
-    def isGoal(state):
-        if state == "b12345678":
-            return 1
-        else:
-            return 0
-
     def traceBack(node):
         # Recursive function to trace action
         if node.parent == None:
@@ -83,7 +77,7 @@ def solveAStar(startState):
     # loop
     while len(frontier) != 0:
         currentNode = frontier.pop(0)
-        if isGoal(currentNode.state):
+        if currentNode.state == "b12345678":  # Test if it is a goal state
             sequences = traceBack(currentNode)
             print("\n========== finished ==========")
             print("initial state")

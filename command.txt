@@ -1,2 +1,2 @@
-randomizeState 100
-solve A-star
+randomizeState 10
+solve beam 1
