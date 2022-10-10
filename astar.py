@@ -1,15 +1,8 @@
 from node import Node
-from utils import printState, move
+from utils import printState, traceBack
 
 
 def solveAStar(startState):
-    def traceBack(node):
-        # Recursive function to trace action
-        if node.parent == None:
-            return []
-        else:
-            return traceBack(node.parent) + [node.actionFromParent]
-
     print("=" * 20, "A-Star search start", "=" * 20)
     initNode = Node(startState, None, None, 0)  # Initial state
     frontier = [initNode]  # contains nodes
@@ -60,6 +53,5 @@ def solveAStar(startState):
             print("depth: ", child.depth)
             print("heuristic: ", child.heuristic)
             print("evaluation: ", child.evaluation)
-        # TODO: traceback
 
     return 0

@@ -1,17 +1,10 @@
 from node import Node
-from utils import printState
+from utils import printState, traceBack
 
 
 def solveLocalBeam(startState, k):
     def sortKey(node):
         return node.evaluation
-
-    def traceBack(node):
-        # Recursive function to trace action
-        if node.parent == None:
-            return []
-        else:
-            return traceBack(node.parent) + [node.actionFromParent]
 
     print("=" * 20, "Local Beam search start", "=" * 20)
     initNode = Node(startState, None, None, 0)  # Initial state

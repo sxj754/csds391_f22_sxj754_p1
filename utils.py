@@ -56,3 +56,11 @@ def randomizeState(n):
             printState(state)
             i += 1
     return state
+
+
+def traceBack(node):
+    # Recursive function to trace action
+    if node.parent == None:
+        return []
+    else:
+        return traceBack(node.parent) + [node.actionFromParent]
