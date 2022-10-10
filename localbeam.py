@@ -62,7 +62,3 @@ def solveLocalBeam(startState, k):
 
         currentNodes = neighborNodes  # change current to it's child
         neighborNodes = []  # refresh the neighbor node
-
-        # find successors of currentNode
-        # sort it from the smallest to the biggest, and slice k items, add to the todo
-        # repeat

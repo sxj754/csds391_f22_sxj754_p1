@@ -56,5 +56,5 @@ class Node:
 
     def makeChildNode(self, action):
         nextState = move(self.state, action)
-        # printState(nextState)
+        printState(nextState)
         return Node(nextState, self, action, self.depth + 1)
